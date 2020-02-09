@@ -14,8 +14,12 @@ namespace pongpong
             {
                 FillColor = Color.Red
             };
-            window.Draw(shape);
-            window.Display();
+            while (window.IsOpen)
+            {
+                window.Draw(shape);
+                window.Display();
+                window.Clear();
+            }
         }
     }
 }
