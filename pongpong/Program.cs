@@ -11,6 +11,7 @@ namespace pongpong
     public class Player
     {
         public float playerSpeed;
+        public Vector2f startPos;
         public Vector2f dirVector = new Vector2f(0f, 0f);
         public float shapeSize;
         public RectangleShape playerShape;
@@ -34,8 +35,11 @@ namespace pongpong
             Vector2f velocity = dirVector*playerSpeed;
             playerShape.Position += velocity;
         }
-        public Player(float shapeSize,float playerSpeed, List<Keyboard.Key> playerKeys)
+        public Player(float shapeSize,float playerSpeed, Vector2f startPos, List<Keyboard.Key> playerKeys)
         {
+            this.startPos = startPos;
+            playerShape.Position = startPos;
+            
             this.playerKeys = playerKeys;
             this.shapeSize = shapeSize;
             playerShape = new RectangleShape(new Vector2f(shapeSize, 10f));
@@ -44,10 +48,11 @@ namespace pongpong
 
     public class Game
     {
+        public RenderWindow window;
         public static List<Keyboard.Key> Player1_Keys = new List<Keyboard.Key>();
         public static List<Keyboard.Key> Player2_Keys = new List<Keyboard.Key>();
-        public Player Player1 = new Player(15f, 5f, Player1_Keys);
-        public Player Player2 = new Player(15f, 5f, Player2_Keys);
+        public Player Player1 = new Player(15f, 5f, new Vector2f(400, 550), Player1_Keys);
+        public Player Player2 = new Player(15f, 5f, new Vector2f(400, 50), Player2_Keys);
         private void Window_KeyPressed(object sender, KeyEventArgs e)
         {
             var window = (Window)sender;
@@ -67,16 +72,16 @@ namespace pongpong
 
         public void Logic()
         {
-            
+            InitKeys();
         }
 
         public void MakeGraphic()
         {
-            
+            window.Draw(Player1.playerShape);
         }
         public void Run()
         {
-            var window = new RenderWindow(new VideoMode(800, 600), "dingdong");
+            window = new RenderWindow(new VideoMode(800, 600), "dingdong");
             window.KeyPressed += Window_KeyPressed;
             window.KeyPressed += Player1.Player_KeyPressed;
             window.KeyPressed += Player2.Player_KeyPressed;
