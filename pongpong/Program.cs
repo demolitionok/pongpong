@@ -37,19 +37,20 @@ namespace pongpong
         }
         public Player(float shapeSize,float playerSpeed, Vector2f startPos, List<Keyboard.Key> playerKeys)
         {
+            playerShape = new RectangleShape(new Vector2f(shapeSize, 10f));
             this.startPos = startPos;
             playerShape.Position = startPos;
-            
+
+            this.playerSpeed = playerSpeed;
             this.playerKeys = playerKeys;
             this.shapeSize = shapeSize;
-            playerShape = new RectangleShape(new Vector2f(shapeSize, 10f));
         }
     }
 
     public class Game
     {
         public RenderWindow window;
-        public static List<Keyboard.Key> Player1_Keys = new List<Keyboard.Key>();
+        private static List<Keyboard.Key> Player1_Keys = new List<Keyboard.Key>();
         public static List<Keyboard.Key> Player2_Keys = new List<Keyboard.Key>();
         public Player Player1 = new Player(15f, 5f, new Vector2f(400, 550), Player1_Keys);
         public Player Player2 = new Player(15f, 5f, new Vector2f(400, 50), Player2_Keys);
@@ -72,15 +73,16 @@ namespace pongpong
 
         public void Logic()
         {
-            InitKeys();
         }
 
         public void MakeGraphic()
         {
             window.Draw(Player1.playerShape);
+            window.Draw(Player2.playerShape);
         }
         public void Run()
         {
+            InitKeys();
             window = new RenderWindow(new VideoMode(800, 600), "dingdong");
             window.KeyPressed += Window_KeyPressed;
             window.KeyPressed += Player1.Player_KeyPressed;
@@ -88,6 +90,8 @@ namespace pongpong
             
             while (window.IsOpen)
             {
+                Logic();
+                MakeGraphic();
                 window.DispatchEvents();
                 window.Display();
                 window.Clear();
