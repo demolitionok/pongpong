@@ -10,8 +10,25 @@ namespace pongpong
 
     public class Player
     {
-        public Shape PlayerShape;
+        public float playerSpeed;
+        public float shapeSize;
+        public RectangleShape playerShape;
         public List<Keyboard.Key> playerKeys;
+
+        public void Player_KeyPressed(object sender, KeyEventArgs e)
+        {
+            if (e.Code == playerKeys[0])
+            {
+                
+            }
+        }
+
+        public Player(float shapeSize,float playerSpeed, List<Keyboard.Key> playerKeys)
+        {
+            this.playerKeys = playerKeys;
+            this.shapeSize = shapeSize;
+            playerShape = new RectangleShape(new Vector2f(shapeSize, 10f));
+        }
     }
 
     public class Game
@@ -46,7 +63,7 @@ namespace pongpong
         public static void Main(string[] args)
         {
             var game = new Game();
-            
+            game.Run();
         }
     }
 }
