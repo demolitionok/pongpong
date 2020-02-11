@@ -7,13 +7,26 @@ using SFML.System;
 
 namespace pongpong
 {
-
-    public class Player
+    public abstract class BaseObject
     {
-        public float playerSpeed;
+        public float speed;
         public Vector2f startPos;
         public Vector2f dirVector = new Vector2f(0f, 0f);
+        public List<Vector2f> vertexses;
         public float shapeSize;
+        public Shape shape;
+
+        public abstract void InitVertexes();
+
+        protected virtual void MoveObject()
+        {
+            Vector2f velocity = dirVector * speed;
+            shape.Position += velocity;
+        }
+    }
+
+    public class Player : BaseObject
+    {
         public RectangleShape playerShape;
         public List<Keyboard.Key> playerKeys;
 
@@ -21,27 +34,35 @@ namespace pongpong
         {
             if (e.Code == playerKeys[0])
             {
-                dirVector = new Vector2f(1,0);
-                movePlayer();
+                dirVector = new Vector2f(1, 0);
+                MoveObject();
             }
+
             if (e.Code == playerKeys[1])
             {
-                dirVector = new Vector2f(-1,0);
-                movePlayer();
+                dirVector = new Vector2f(-1, 0);
+                MoveObject();
             }
         }
-        public void movePlayer()
+
+        protected override void MoveObject()
         {
-            Vector2f velocity = dirVector*playerSpeed;
-            playerShape.Position += velocity;
+            base.MoveObject();
         }
-        public Player(float shapeSize,float playerSpeed, Vector2f startPos, List<Keyboard.Key> playerKeys)
+
+        public override void InitVertexes()
+        {
+            //vertexses.Add(playerShape.Position);
+        }
+
+        public Player(float shapeSize, float speed, Vector2f startPos, List<Keyboard.Key> playerKeys)
         {
             playerShape = new RectangleShape(new Vector2f(shapeSize, 10f));
+            shape = playerShape;
             this.startPos = startPos;
             playerShape.Position = startPos;
 
-            this.playerSpeed = playerSpeed;
+            this.speed = speed;
             this.playerKeys = playerKeys;
             this.shapeSize = shapeSize;
         }
@@ -54,9 +75,10 @@ namespace pongpong
         public static List<Keyboard.Key> Player2_Keys = new List<Keyboard.Key>();
         public Player Player1 = new Player(15f, 5f, new Vector2f(400, 550), Player1_Keys);
         public Player Player2 = new Player(15f, 5f, new Vector2f(400, 50), Player2_Keys);
+
         private void Window_KeyPressed(object sender, KeyEventArgs e)
         {
-            var window = (Window)sender;
+            var window = (Window) sender;
             if (e.Code == Keyboard.Key.Escape)
             {
                 window.Close();
@@ -80,6 +102,7 @@ namespace pongpong
             window.Draw(Player1.playerShape);
             window.Draw(Player2.playerShape);
         }
+
         public void Run()
         {
             InitKeys();
@@ -87,7 +110,7 @@ namespace pongpong
             window.KeyPressed += Window_KeyPressed;
             window.KeyPressed += Player1.Player_KeyPressed;
             window.KeyPressed += Player2.Player_KeyPressed;
-            
+
             while (window.IsOpen)
             {
                 Logic();
