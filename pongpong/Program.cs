@@ -7,16 +7,18 @@ using SFML.System;
 
 namespace pongpong
 {
-    public abstract class BaseObject
+    public interface IVertexContaining
+    {
+        void InitVertexes();
+    }
+    public class BaseObject
     {
         public float speed;
         public Vector2f startPos;
         public Vector2f dirVector = new Vector2f(0f, 0f);
-        public List<Vector2f> vertexses;
+        public List<Vector2f> vertexes;
         public Vector2f shapeSize;
         public Shape shape;
-
-        public abstract void InitVertexes();
 
         protected virtual void MoveObject()
         {
@@ -25,19 +27,19 @@ namespace pongpong
         }
     }
 
-    public class Puck : BaseObject
+    public class Puck : BaseObject, IVertexContaining
     {
         public CircleShape puckShape;
         protected override void MoveObject()
         {
             base.MoveObject();
         }
-        public override void InitVertexes()
+        public void InitVertexes()
         {
-            vertexses.Add(new Vector2f(0.5f * shapeSize.X + puckShape.Position.X, puckShape.Position.Y));
-            vertexses.Add(new Vector2f(shapeSize.X + puckShape.Position.X, 0.5f * shapeSize.Y + puckShape.Position.Y));
-            vertexses.Add(new Vector2f(0.5f * shapeSize.X + puckShape.Position.X, shapeSize.Y + puckShape.Position.Y));
-            vertexses.Add(new Vector2f(puckShape.Position.X, 0.5f * shapeSize.Y + puckShape.Position.Y));
+            vertexes.Add(new Vector2f(0.5f * shapeSize.X + puckShape.Position.X, puckShape.Position.Y));
+            vertexes.Add(new Vector2f(shapeSize.X + puckShape.Position.X, 0.5f * shapeSize.Y + puckShape.Position.Y));
+            vertexes.Add(new Vector2f(0.5f * shapeSize.X + puckShape.Position.X, shapeSize.Y + puckShape.Position.Y));
+            vertexes.Add(new Vector2f(puckShape.Position.X, 0.5f * shapeSize.Y + puckShape.Position.Y));
             /*
              *    ./----[0]----\
              *    |            |
@@ -48,9 +50,10 @@ namespace pongpong
              *     It should look like a circle.
              */
         }
+
     }
 
-    public class Player : BaseObject
+    public class Player : BaseObject, IVertexContaining
     {
         public RectangleShape playerShape;
         public List<Keyboard.Key> playerKeys;
@@ -70,17 +73,12 @@ namespace pongpong
             }
         }
 
-        protected override void MoveObject()
+        public void InitVertexes()
         {
-            base.MoveObject();
-        }
-
-        public override void InitVertexes()
-        {
-            vertexses.Add(playerShape.Position);
-            vertexses.Add(new Vector2f(shapeSize.X + playerShape.Position.X, playerShape.Position.Y));
-            vertexses.Add(shapeSize + playerShape.Position);
-            vertexses.Add(new Vector2f(playerShape.Position.X, shapeSize.Y + playerShape.Position.Y));
+            vertexes.Add(playerShape.Position);
+            vertexes.Add(new Vector2f(shapeSize.X + playerShape.Position.X, playerShape.Position.Y));
+            vertexes.Add(shapeSize + playerShape.Position);
+            vertexes.Add(new Vector2f(playerShape.Position.X, shapeSize.Y + playerShape.Position.Y));
             /*
              *    [0]-------[1]
              *    |           |
@@ -129,6 +127,9 @@ namespace pongpong
             Player2_Keys.Add(Keyboard.Key.Left);
         }
 
+        public void DetectCollision(List<IVertexContaining> figures)
+        {
+        }
         public void Logic()
         {
         }
