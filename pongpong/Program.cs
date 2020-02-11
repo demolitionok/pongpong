@@ -27,6 +27,35 @@ namespace pongpong
         }
     }
 
+    public class Obstacle : BaseObject, IVertexContaining
+    {
+        public RectangleShape obstacleShape;
+        public void InitVertexes()
+        {
+            vertexes.Add(obstacleShape.Position);
+            vertexes.Add(new Vector2f(shapeSize.X + obstacleShape.Position.X, obstacleShape.Position.Y));
+            vertexes.Add(shapeSize + obstacleShape.Position);
+            vertexes.Add(new Vector2f(obstacleShape.Position.X, shapeSize.Y + obstacleShape.Position.Y));
+            /*
+             *    [0]-------------[1]
+             *    |                |
+             *    |    obstacle    |
+             *    |                |
+             *    [3]-------------[2]
+             * 
+             */
+        }
+        public Obstacle(Vector2f startPos, Vector2f shapeSize)
+        {
+            this.startPos = startPos;
+            this.shapeSize = shapeSize;
+            
+            obstacleShape = new RectangleShape(shapeSize);
+            obstacleShape.Position = startPos;
+            shape = obstacleShape;
+        }
+    }
+
     public class Puck : BaseObject, IVertexContaining
     {
         public CircleShape puckShape;
@@ -92,23 +121,25 @@ namespace pongpong
         public Player(Vector2f shapeSize, float speed, Vector2f startPos, List<Keyboard.Key> playerKeys)
         {
             playerShape = new RectangleShape(shapeSize);
-            shape = playerShape;
             this.startPos = startPos;
             playerShape.Position = startPos;
 
             this.speed = speed;
             this.playerKeys = playerKeys;
             this.shapeSize = shapeSize;
+            shape = playerShape;
         }
     }
 
     public class Game
     {
         public RenderWindow window;
-        private static List<Keyboard.Key> Player1_Keys = new List<Keyboard.Key>();
+        public static List<Keyboard.Key> Player1_Keys = new List<Keyboard.Key>();
         public static List<Keyboard.Key> Player2_Keys = new List<Keyboard.Key>();
         public Player Player1 = new Player(new Vector2f(30f, 20f), 5f, new Vector2f(400, 550), Player1_Keys);
         public Player Player2 = new Player(new Vector2f(30f, 20f), 5f, new Vector2f(400, 50), Player2_Keys);
+        public List<IVertexContaining> VertexContainings = new List<IVertexContaining>();
+        public List<BaseObject> BaseObjects = new List<BaseObject>();
 
         private void Window_KeyPressed(object sender, KeyEventArgs e)
         {
@@ -117,6 +148,14 @@ namespace pongpong
             {
                 window.Close();
             }
+        }
+
+        public void InitObstacles()
+        {
+            BaseObjects.Add(Player1);
+            BaseObjects.Add(Player2);
+            BaseObjects.Add(new Obstacle(new Vector2f(0f, 0f), new Vector2f(50f, 600f)));
+            BaseObjects.Add(new Obstacle(new Vector2f(750f, 0f), new Vector2f(50f, 600f)));
         }
 
         public void InitKeys()
@@ -136,8 +175,11 @@ namespace pongpong
 
         public void MakeGraphic()
         {
-            window.Draw(Player1.playerShape);
-            window.Draw(Player2.playerShape);
+            InitObstacles();
+            foreach (BaseObject figure in BaseObjects)
+            {
+                window.Draw(figure.shape);
+            }
         }
 
         public void Run()
