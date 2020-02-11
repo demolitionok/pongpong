@@ -13,7 +13,7 @@ namespace pongpong
         public Vector2f startPos;
         public Vector2f dirVector = new Vector2f(0f, 0f);
         public List<Vector2f> vertexses;
-        public float shapeSize;
+        public Vector2f shapeSize;
         public Shape shape;
 
         public abstract void InitVertexes();
@@ -22,6 +22,31 @@ namespace pongpong
         {
             Vector2f velocity = dirVector * speed;
             shape.Position += velocity;
+        }
+    }
+
+    public class Puck : BaseObject
+    {
+        public CircleShape puckShape;
+        protected override void MoveObject()
+        {
+            base.MoveObject();
+        }
+        public override void InitVertexes()
+        {
+            vertexses.Add(new Vector2f(0.5f * shapeSize.X + puckShape.Position.X, puckShape.Position.Y));
+            vertexses.Add(new Vector2f(shapeSize.X + puckShape.Position.X, 0.5f * shapeSize.Y + puckShape.Position.Y));
+            vertexses.Add(new Vector2f(0.5f * shapeSize.X + puckShape.Position.X, shapeSize.Y + puckShape.Position.Y));
+            vertexses.Add(new Vector2f(puckShape.Position.X, 0.5f * shapeSize.Y + puckShape.Position.Y));
+            /*
+             *    ./----[0]----\
+             *    |            |
+             *  [3]    Puck    [1]
+             *    |            |
+             *     \---[2]---/
+             *
+             *     It should look like a circle.
+             */
         }
     }
 
@@ -52,12 +77,23 @@ namespace pongpong
 
         public override void InitVertexes()
         {
-            //vertexses.Add(playerShape.Position);
+            vertexses.Add(playerShape.Position);
+            vertexses.Add(new Vector2f(shapeSize.X + playerShape.Position.X, playerShape.Position.Y));
+            vertexses.Add(shapeSize + playerShape.Position);
+            vertexses.Add(new Vector2f(playerShape.Position.X, shapeSize.Y + playerShape.Position.Y));
+            /*
+             *    [0]-------[1]
+             *    |           |
+             *    |   Player  |
+             *    |           |
+             *    [3]-------[2]
+             * 
+             */
         }
 
-        public Player(float shapeSize, float speed, Vector2f startPos, List<Keyboard.Key> playerKeys)
+        public Player(Vector2f shapeSize, float speed, Vector2f startPos, List<Keyboard.Key> playerKeys)
         {
-            playerShape = new RectangleShape(new Vector2f(shapeSize, 10f));
+            playerShape = new RectangleShape(shapeSize);
             shape = playerShape;
             this.startPos = startPos;
             playerShape.Position = startPos;
@@ -73,8 +109,8 @@ namespace pongpong
         public RenderWindow window;
         private static List<Keyboard.Key> Player1_Keys = new List<Keyboard.Key>();
         public static List<Keyboard.Key> Player2_Keys = new List<Keyboard.Key>();
-        public Player Player1 = new Player(15f, 5f, new Vector2f(400, 550), Player1_Keys);
-        public Player Player2 = new Player(15f, 5f, new Vector2f(400, 50), Player2_Keys);
+        public Player Player1 = new Player(new Vector2f(30f, 20f), 5f, new Vector2f(400, 550), Player1_Keys);
+        public Player Player2 = new Player(new Vector2f(30f, 20f), 5f, new Vector2f(400, 50), Player2_Keys);
 
         private void Window_KeyPressed(object sender, KeyEventArgs e)
         {
