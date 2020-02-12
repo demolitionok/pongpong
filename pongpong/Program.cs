@@ -17,17 +17,17 @@ namespace pongpong
         public float speed;
         public Vector2f startPos;
         public Vector2f dirVector = new Vector2f(0f, 0f);
-        public List<Vector2f> vertexes = new List<Vector2f>();
+        public Vector2f[] vertexes = new Vector2f[4];
         public Vector2f shapeSize;
         public Shape shape;
 
         
         public void InitVertexes()
         {
-            vertexes.Add(shape.Position);
-            vertexes.Add(new Vector2f(shapeSize.X + shape.Position.X, shape.Position.Y));
-            vertexes.Add(shapeSize + shape.Position);
-            vertexes.Add(new Vector2f(shape.Position.X, shapeSize.Y + shape.Position.Y));
+            vertexes[0] = shape.Position;
+            vertexes[1] = new Vector2f(shapeSize.X + shape.Position.X, shape.Position.Y);
+            vertexes[2] = shapeSize + shape.Position;
+            vertexes[3] = new Vector2f(shape.Position.X, shapeSize.Y + shape.Position.Y);
             /*
              *    [0]--------[1]
              *    |            |
@@ -37,6 +37,7 @@ namespace pongpong
              * 
              */
         }
+
 
         public virtual void MoveObject()
         {
@@ -63,10 +64,10 @@ namespace pongpong
     {
         public new void InitVertexes()
         {
-            vertexes.Add(new Vector2f(0.5f * shapeSize.X + shape.Position.X, shape.Position.Y));
-            vertexes.Add(new Vector2f(shapeSize.X + shape.Position.X, 0.5f * shapeSize.Y + shape.Position.Y));
-            vertexes.Add(new Vector2f(0.5f * shapeSize.X + shape.Position.X, shapeSize.Y + shape.Position.Y));
-            vertexes.Add(new Vector2f(shape.Position.X, 0.5f * shapeSize.Y + shape.Position.Y));
+            vertexes[0] = new Vector2f(0.5f * shapeSize.X + shape.Position.X, shape.Position.Y);
+            vertexes[1] = new Vector2f(shapeSize.X + shape.Position.X, 0.5f * shapeSize.Y + shape.Position.Y);
+            vertexes[2] = new Vector2f(0.5f * shapeSize.X + shape.Position.X, shapeSize.Y + shape.Position.Y);
+            vertexes[3] = new Vector2f(shape.Position.X, 0.5f * shapeSize.Y + shape.Position.Y);
             /*
              *    ./----[0]----\
              *    |            |
