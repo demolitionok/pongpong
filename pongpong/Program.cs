@@ -191,11 +191,7 @@ namespace pongpong
         public static List<Keyboard.Key> Player1_Keys = new List<Keyboard.Key>();
         public static List<Keyboard.Key> Player2_Keys = new List<Keyboard.Key>();
 
-        Text winnerName = new Text()
-        {
-                
-            FillColor = Color.White
-        };
+        Text winnerName = new Text() {FillColor = Color.White};
         public static Player Player1 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 550), Player1_Keys, "Player1");
         public static Player Player2 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 50), Player2_Keys, "Player2");
         
@@ -280,17 +276,13 @@ namespace pongpong
 
         public void GetWinner(Collision coll)
         {
-            /*if (coll.collObject?.GetType() == typeof(ScoreArea))
+            if (coll.collObject?.GetType() == typeof(ScoreArea))
             {
                 ScoreArea temp = (ScoreArea)coll.collObject;
-                winnerName.Font = new Font("BiolinumV1.ttf");
-                winnerName.CharacterSize = 22;
-                winnerName.FillColor = Color.White;
                 winnerName.DisplayedString = temp.owner.name;
-                window.Draw(winnerName);
-                window.Close();
-            }*/
-            if (coll.collObject == ScoreArea1 && coll.collObject != null)
+                gameStopped = true;
+            }
+            /*if (coll.collObject == ScoreArea1 && coll.collObject != null)
             {
                 winnerName.DisplayedString = ScoreArea1.owner.name;
                 gameStopped = true;
@@ -299,7 +291,7 @@ namespace pongpong
             {
                 winnerName.DisplayedString = ScoreArea2.owner.name;
                 gameStopped = true;
-            }
+            }*/
         }
 
         public void Logic()
@@ -329,7 +321,7 @@ namespace pongpong
             Initialization();
             while (window.IsOpen)
             {
-                if (gameStopped == false)
+                if (gameStopped  == false)
                 {
                     Logic();
                     MakeGraphic();
