@@ -159,14 +159,17 @@ namespace pongpong
             if (e.Code == playerKeys[0])
             {
                 dirVector = new Vector2f(1, 0);
-                MoveObject();
             }
 
             if (e.Code == playerKeys[1])
             {
                 dirVector = new Vector2f(-1, 0);
-                MoveObject();
             }
+        }
+
+        public void Player_KeyReleased(object sender, KeyEventArgs e)
+        {
+            dirVector = new Vector2f(0, 0);
         }
 
         public Player(Vector2f shapeSize, float speed, Vector2f startPos, List<Keyboard.Key> playerKeys, string name)
@@ -185,11 +188,12 @@ namespace pongpong
 
     public class Game
     {
-        public bool gameStopped = false;
+        private Clock clock;
+        public bool gameStopped;
         
         public RenderWindow window;
-        public static List<Keyboard.Key> Player1_Keys = new List<Keyboard.Key>();
-        public static List<Keyboard.Key> Player2_Keys = new List<Keyboard.Key>();
+        public static List<Keyboard.Key> Player1_Keys;
+        public static List<Keyboard.Key> Player2_Keys;
 
         Text winnerName;
         public static Player Player1;
@@ -214,14 +218,16 @@ namespace pongpong
 
         public void InitVariables()
         {
+            clock = new Clock();
+            gameStopped = false;
             winnerName = new Text() {FillColor = Color.White};
-            Player1 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 550), Player1_Keys, "Player1"); 
-            Player2 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 50), Player2_Keys, "Player2");
+            Player1 = new Player(new Vector2f(50f, 20f), 1f, new Vector2f(400, 550), Player1_Keys, "Player1"); 
+            Player2 = new Player(new Vector2f(50f, 20f), 1f, new Vector2f(400, 50), Player2_Keys, "Player2");
         
             ScoreArea1 = new ScoreArea(new Vector2f(50f, 0f), new Vector2f(700f, 25f), Player1);
             ScoreArea2 = new ScoreArea(new Vector2f(50f, 575f), new Vector2f(700f, 25f), Player2);
         
-            puck = new Puck(new Vector2f(10f,10f), 0.2f,new Vector2f(-1f,0.5f), new Vector2f(400,300), Color.Red);
+            puck = new Puck(new Vector2f(10f,10f), 0.1f,new Vector2f(-1f,0.5f), new Vector2f(400,300), Color.Red);
         
             VertexContainings = new List<IVertexContaining>();
             BaseObjects = new List<BaseObject>();
@@ -247,6 +253,9 @@ namespace pongpong
 
         public void InitKeys()
         {
+            Player1_Keys = new List<Keyboard.Key>();
+            Player2_Keys = new List<Keyboard.Key>();
+            
             Player1_Keys.Add(Keyboard.Key.F);
             Player1_Keys.Add(Keyboard.Key.D);
             Player2_Keys.Add(Keyboard.Key.Right);
@@ -284,9 +293,9 @@ namespace pongpong
 
         public void Initialization()
         {
+            InitKeys();
             InitVariables();
             InitText();
-            InitKeys();
             InitObstacles();
         }
 
@@ -304,6 +313,8 @@ namespace pongpong
         {
             Collision puckCollision = DetectCollision(puck, BaseObjects);
             puck.MoveObject(puckCollision);
+            Player1.MoveObject();
+            Player2.MoveObject();
             GetWinner(puckCollision);
         }
 
@@ -323,7 +334,10 @@ namespace pongpong
             Initialization();
             window.KeyPressed += Window_KeyPressed;
             window.KeyPressed += Player1.Player_KeyPressed;
+            window.KeyReleased += Player1.Player_KeyReleased;
             window.KeyPressed += Player2.Player_KeyPressed;
+            window.KeyReleased += Player2.Player_KeyReleased;
+            
             while (window.IsOpen)
             {
                 if (gameStopped  == false)
@@ -333,6 +347,7 @@ namespace pongpong
                     window.DispatchEvents();
                     window.Display();
                     window.Clear();
+                    
                 }
                 else
                 {
@@ -340,6 +355,11 @@ namespace pongpong
                     window.DispatchEvents();
                     window.Display();
                     window.Clear();
+                    Time elapsed = clock.ElapsedTime;
+                    if(elapsed >= Time.FromSeconds(10))
+                    {
+                        Initialization();
+                    }
                 }
             }
         }
