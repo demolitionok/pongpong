@@ -191,17 +191,17 @@ namespace pongpong
         public static List<Keyboard.Key> Player1_Keys = new List<Keyboard.Key>();
         public static List<Keyboard.Key> Player2_Keys = new List<Keyboard.Key>();
 
-        Text winnerName = new Text() {FillColor = Color.White};
-        public static Player Player1 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 550), Player1_Keys, "Player1");
-        public static Player Player2 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 50), Player2_Keys, "Player2");
+        Text winnerName;
+        public static Player Player1;
+        public static Player Player2;
         
-        public ScoreArea ScoreArea1 = new ScoreArea(new Vector2f(50f, 0f), new Vector2f(700f, 25f), Player1);
-        public ScoreArea ScoreArea2 = new ScoreArea(new Vector2f(50f, 575f), new Vector2f(700f, 25f), Player2);
+        public ScoreArea ScoreArea1;
+        public ScoreArea ScoreArea2;
         
-        public Puck puck = new Puck(new Vector2f(10f,10f), 0.2f,new Vector2f(-1f,0.5f), new Vector2f(400,300), Color.Red);
+        public Puck puck;
         
-        public List<IVertexContaining> VertexContainings = new List<IVertexContaining>();
-        public List<BaseObject> BaseObjects = new List<BaseObject>();
+        public List<IVertexContaining> VertexContainings;
+        public List<BaseObject> BaseObjects;
 
         private void Window_KeyPressed(object sender, KeyEventArgs e)
         {
@@ -210,6 +210,21 @@ namespace pongpong
             {
                 window.Close();
             }
+        }
+
+        public void InitVariables()
+        {
+            winnerName = new Text() {FillColor = Color.White};
+            Player1 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 550), Player1_Keys, "Player1"); 
+            Player2 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 50), Player2_Keys, "Player2");
+        
+            ScoreArea1 = new ScoreArea(new Vector2f(50f, 0f), new Vector2f(700f, 25f), Player1);
+            ScoreArea2 = new ScoreArea(new Vector2f(50f, 575f), new Vector2f(700f, 25f), Player2);
+        
+            puck = new Puck(new Vector2f(10f,10f), 0.2f,new Vector2f(-1f,0.5f), new Vector2f(400,300), Color.Red);
+        
+            VertexContainings = new List<IVertexContaining>();
+            BaseObjects = new List<BaseObject>();
         }
 
         public void InitText()
@@ -269,6 +284,7 @@ namespace pongpong
 
         public void Initialization()
         {
+            InitVariables();
             InitText();
             InitKeys();
             InitObstacles();
@@ -282,16 +298,6 @@ namespace pongpong
                 winnerName.DisplayedString = temp.owner.name;
                 gameStopped = true;
             }
-            /*if (coll.collObject == ScoreArea1 && coll.collObject != null)
-            {
-                winnerName.DisplayedString = ScoreArea1.owner.name;
-                gameStopped = true;
-            }
-            else if (coll.collObject == ScoreArea2)
-            {
-                winnerName.DisplayedString = ScoreArea2.owner.name;
-                gameStopped = true;
-            }*/
         }
 
         public void Logic()
@@ -314,11 +320,10 @@ namespace pongpong
         public void Run()
         {
             window = new RenderWindow(new VideoMode(800, 600), "dingdong");
+            Initialization();
             window.KeyPressed += Window_KeyPressed;
             window.KeyPressed += Player1.Player_KeyPressed;
             window.KeyPressed += Player2.Player_KeyPressed;
-
-            Initialization();
             while (window.IsOpen)
             {
                 if (gameStopped  == false)
