@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Net.WebSockets;
 using SFML.Window;
 using SFML.Graphics;
@@ -12,6 +13,19 @@ namespace pongpong
     {
         void InitVertexes();
     }
+
+    public class Collision
+    {
+        public Vector2f collVector;
+        public BaseObject collObject;
+
+        public Collision(Vector2f collVector, BaseObject collObject)
+        {
+            this.collVector = collVector;
+            this.collObject = collObject;
+        }
+    }
+
     public class BaseObject : IVertexContaining
     {
         public float speed = 0;
@@ -95,21 +109,21 @@ namespace pongpong
              */
         }
 
-        public new void MoveObject(Vector2f collVector, RenderWindow window)
+        public new void MoveObject(Collision coll)
         {
             velocity = dirVector * speed;
-            if (collVector == new Vector2f(0,0))
+            if (coll.collVector == new Vector2f(0,0))
             {
                 
                 shape.Position += velocity;
             }
             else
             {
-                if (collVector == vertexes[0] || collVector == vertexes[2])
+                if (coll.collVector == vertexes[0] || coll.collVector == vertexes[2])
                 {
                     dirVector = new Vector2f(dirVector.X, -dirVector.Y);
                 }
-                else if (collVector == vertexes[1] || collVector == vertexes[3])
+                else if (coll.collVector == vertexes[1] || coll.collVector == vertexes[3])
                 {
                     dirVector = new Vector2f(-dirVector.X, dirVector.Y);
                 }
@@ -138,6 +152,7 @@ namespace pongpong
     public class Player : BaseObject
     {
         public List<Keyboard.Key> playerKeys;
+        public string name;
 
         public void Player_KeyPressed(object sender, KeyEventArgs e)
         {
@@ -154,8 +169,9 @@ namespace pongpong
             }
         }
 
-        public Player(Vector2f shapeSize, float speed, Vector2f startPos, List<Keyboard.Key> playerKeys)
+        public Player(Vector2f shapeSize, float speed, Vector2f startPos, List<Keyboard.Key> playerKeys, string name)
         {
+            this.name = name;
             shape = new RectangleShape(shapeSize);
             this.startPos = startPos;
             shape.Position = startPos;
@@ -169,15 +185,22 @@ namespace pongpong
 
     public class Game
     {
+        public bool gameStopped = false;
+        
         public RenderWindow window;
         public static List<Keyboard.Key> Player1_Keys = new List<Keyboard.Key>();
         public static List<Keyboard.Key> Player2_Keys = new List<Keyboard.Key>();
-        
-        public static Player Player1 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 550), Player1_Keys);
-        public static Player Player2 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 50), Player2_Keys);
+
+        Text winnerName = new Text()
+        {
+                
+            FillColor = Color.White
+        };
+        public static Player Player1 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 550), Player1_Keys, "Player1");
+        public static Player Player2 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 50), Player2_Keys, "Player2");
         
         public ScoreArea ScoreArea1 = new ScoreArea(new Vector2f(50f, 0f), new Vector2f(700f, 25f), Player1);
-        public ScoreArea ScoreArea2 = new ScoreArea(new Vector2f(50f, 0f), new Vector2f(700f, 25f), Player2);
+        public ScoreArea ScoreArea2 = new ScoreArea(new Vector2f(50f, 575f), new Vector2f(700f, 25f), Player2);
         
         public Puck puck = new Puck(new Vector2f(10f,10f), 0.2f,new Vector2f(-1f,0.5f), new Vector2f(400,300), Color.Red);
         
@@ -193,10 +216,20 @@ namespace pongpong
             }
         }
 
+        public void InitText()
+        {
+            winnerName.Font = new Font("BiolinumV1.ttf");
+            winnerName.CharacterSize = 22;
+            winnerName.FillColor = Color.White;    
+            winnerName.Position = new Vector2f(400,300);          
+        }
+
         public void InitObstacles()
         {
             BaseObjects.Add(Player1);
             BaseObjects.Add(Player2);
+            BaseObjects.Add(ScoreArea1);
+            BaseObjects.Add(ScoreArea2);
             BaseObjects.Add(new Obstacle(new Vector2f(0f, 0f), new Vector2f(50f, 600f)));
             BaseObjects.Add(new Obstacle(new Vector2f(750f, 0f), new Vector2f(50f, 600f)));
         }
@@ -208,8 +241,7 @@ namespace pongpong
             Player2_Keys.Add(Keyboard.Key.Right);
             Player2_Keys.Add(Keyboard.Key.Left);
         }
-
-        public Vector2f DetectCollision(Puck baseObject, List<BaseObject> figures)
+        public Collision DetectCollision(BaseObject baseObject, List<BaseObject> figures)
         {
             /*Puck tempBaseObject = baseObject;
             tempBaseObject.shape.Position += tempBaseObject.velocity;
@@ -232,26 +264,54 @@ namespace pongpong
                         )
                         )
                     {
-                        return baseObject.vertexes[i];
+                        return new Collision(baseObject.vertexes[i], figure);
                     }
                 }   
             }
-            return new Vector2f(0, 0);
+            return new Collision(new Vector2f(0,0), null);
         }
 
         public void Initialization()
         {
+            InitText();
             InitKeys();
             InitObstacles();
         }
 
+        public void GetWinner(Collision coll)
+        {
+            /*if (coll.collObject?.GetType() == typeof(ScoreArea))
+            {
+                ScoreArea temp = (ScoreArea)coll.collObject;
+                winnerName.Font = new Font("BiolinumV1.ttf");
+                winnerName.CharacterSize = 22;
+                winnerName.FillColor = Color.White;
+                winnerName.DisplayedString = temp.owner.name;
+                window.Draw(winnerName);
+                window.Close();
+            }*/
+            if (coll.collObject == ScoreArea1 && coll.collObject != null)
+            {
+                winnerName.DisplayedString = ScoreArea1.owner.name;
+                gameStopped = true;
+            }
+            else if (coll.collObject == ScoreArea2)
+            {
+                winnerName.DisplayedString = ScoreArea2.owner.name;
+                gameStopped = true;
+            }
+        }
+
         public void Logic()
         {
-            puck.MoveObject(DetectCollision(puck, BaseObjects), window);
+            Collision puckCollision = DetectCollision(puck, BaseObjects);
+            puck.MoveObject(puckCollision);
+            GetWinner(puckCollision);
         }
 
         public void MakeGraphic()
         {
+            
             foreach (BaseObject figure in BaseObjects)
             {
                 window.Draw(figure.shape);
@@ -269,11 +329,21 @@ namespace pongpong
             Initialization();
             while (window.IsOpen)
             {
-                Logic();
-                MakeGraphic();
-                window.DispatchEvents();
-                window.Display();
-                window.Clear();
+                if (gameStopped == false)
+                {
+                    Logic();
+                    MakeGraphic();
+                    window.DispatchEvents();
+                    window.Display();
+                    window.Clear();
+                }
+                else
+                {
+                    window.Draw(winnerName);
+                    window.DispatchEvents();
+                    window.Display();
+                    window.Clear();
+                }
             }
         }
     }
