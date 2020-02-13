@@ -48,6 +48,7 @@ namespace pongpong
         }
     }
 
+
     public class Obstacle : BaseObject
     {
         public Obstacle(Vector2f startPos, Vector2f shapeSize)
@@ -60,7 +61,21 @@ namespace pongpong
             InitVertexes();
         }
     }
-
+    public class ScoreArea : BaseObject //kak nasledovatsa ot Obstacle perenyav konstuktor
+    {
+        public Player owner;
+        public ScoreArea(Vector2f startPos, Vector2f shapeSize, Player owner)
+        {
+            this.startPos = startPos;
+            this.shapeSize = shapeSize;
+            this.owner = owner;
+            
+            shape = new RectangleShape(shapeSize);
+            shape.Position = startPos;
+            shape.FillColor = Color.Green;
+            InitVertexes();
+        }
+    }
     public class Puck : BaseObject, IVertexContaining
     {
         public new void InitVertexes()
@@ -158,8 +173,12 @@ namespace pongpong
         public static List<Keyboard.Key> Player1_Keys = new List<Keyboard.Key>();
         public static List<Keyboard.Key> Player2_Keys = new List<Keyboard.Key>();
         
-        public Player Player1 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 550), Player1_Keys);
-        public Player Player2 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 50), Player2_Keys);
+        public static Player Player1 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 550), Player1_Keys);
+        public static Player Player2 = new Player(new Vector2f(50f, 20f), 5f, new Vector2f(400, 50), Player2_Keys);
+        
+        public ScoreArea ScoreArea1 = new ScoreArea(new Vector2f(50f, 0f), new Vector2f(700f, 25f), Player1);
+        public ScoreArea ScoreArea2 = new ScoreArea(new Vector2f(50f, 0f), new Vector2f(700f, 25f), Player2);
+        
         public Puck puck = new Puck(new Vector2f(10f,10f), 0.2f,new Vector2f(-1f,0.5f), new Vector2f(400,300), Color.Red);
         
         public List<IVertexContaining> VertexContainings = new List<IVertexContaining>();
