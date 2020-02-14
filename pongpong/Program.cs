@@ -14,7 +14,7 @@ namespace pongpong
         void InitVertexes();
     }
 
-    public class Collision
+    public struct Collision
     {
         public Vector2f collVector;
         public BaseObject collObject;
@@ -28,12 +28,12 @@ namespace pongpong
 
     public class BaseObject : IVertexContaining
     {
-        public float speed = 0;
-        public Vector2f startPos;
-        public Vector2f dirVector = new Vector2f(0f, 0f);
-        public Vector2f velocity;
+        protected float speed = 0;
+        protected Vector2f startPos;
+        protected Vector2f dirVector = new Vector2f(0f, 0f);
+        protected Vector2f velocity;
         public Vector2f[] vertexes = new Vector2f[4];
-        public Vector2f shapeSize;
+        protected Vector2f shapeSize;
         public Shape shape;
 
         
@@ -151,7 +151,7 @@ namespace pongpong
 
     public class Player : BaseObject
     {
-        public List<Keyboard.Key> playerKeys;
+        private List<Keyboard.Key> playerKeys;
         public string name;
 
         public void Player_KeyPressed(object sender, KeyEventArgs e)
@@ -189,23 +189,23 @@ namespace pongpong
     public class Game
     {
         private Clock clock;
-        public bool gameStopped;
+        private bool gameStopped;
         
-        public RenderWindow window;
-        public static List<Keyboard.Key> Player1_Keys;
-        public static List<Keyboard.Key> Player2_Keys;
+        private RenderWindow window;
+        private static List<Keyboard.Key> Player1_Keys;
+        private static List<Keyboard.Key> Player2_Keys;
 
         Text winnerName;
-        public static Player Player1;
-        public static Player Player2;
+        private static Player Player1;
+        private static Player Player2;
         
-        public ScoreArea ScoreArea1;
-        public ScoreArea ScoreArea2;
+        private ScoreArea ScoreArea1;
+        private ScoreArea ScoreArea2;
         
-        public Puck puck;
+        private Puck puck;
         
-        public List<IVertexContaining> VertexContainings;
-        public List<BaseObject> BaseObjects;
+        private List<IVertexContaining> VertexContainings;
+        private List<BaseObject> BaseObjects;
 
         private void Window_KeyPressed(object sender, KeyEventArgs e)
         {
@@ -216,7 +216,7 @@ namespace pongpong
             }
         }
 
-        public void InitVariables()
+        private void InitVariables()
         {
             clock = new Clock();
             gameStopped = false;
@@ -233,7 +233,7 @@ namespace pongpong
             BaseObjects = new List<BaseObject>();
         }
 
-        public void InitText()
+        private void InitText()
         {
             winnerName.Font = new Font("BiolinumV1.ttf");
             winnerName.CharacterSize = 22;
@@ -241,7 +241,7 @@ namespace pongpong
             winnerName.Position = new Vector2f(400,300);          
         }
 
-        public void InitObstacles()
+        private void InitObstacles()
         {
             BaseObjects.Add(Player1);
             BaseObjects.Add(Player2);
@@ -253,7 +253,7 @@ namespace pongpong
             BaseObjects.Add(new Obstacle(new Vector2f(750f, 0f), new Vector2f(50f, 600f)));
         }
 
-        public void InitEvents()
+        private void InitEvents()
         {
             window.KeyPressed += Window_KeyPressed;
             window.KeyPressed += Player1.Player_KeyPressed;
@@ -262,7 +262,7 @@ namespace pongpong
             window.KeyReleased += Player2.Player_KeyReleased;
         }
 
-        public void InitKeys()
+        private void InitKeys()
         {
             Player1_Keys = new List<Keyboard.Key>();
             Player2_Keys = new List<Keyboard.Key>();
@@ -273,7 +273,7 @@ namespace pongpong
             Player2_Keys.Add(Keyboard.Key.Left);
         }
 
-        public void Initialization()
+        private void Initialization()
         {
             InitKeys();
             InitVariables();
@@ -281,7 +281,7 @@ namespace pongpong
             InitObstacles();
             InitEvents();
         }
-        public Collision DetectCollision(BaseObject baseObject, List<BaseObject> figures)
+        private Collision DetectCollision(BaseObject baseObject, List<BaseObject> figures)
         {
             /*Puck tempBaseObject = baseObject;
             tempBaseObject.shape.Position += tempBaseObject.velocity;
@@ -311,7 +311,7 @@ namespace pongpong
             return new Collision(new Vector2f(0,0), null);
         }
 
-        public void GetWinner(Collision coll)
+        private void GetWinner(Collision coll)
         {
             if (coll.collObject?.GetType() == typeof(ScoreArea))
             {
@@ -321,7 +321,7 @@ namespace pongpong
             }
         }
 
-        public void Logic()
+        private void Logic()
         {
             Collision puckCollision = DetectCollision(puck, BaseObjects);
             puck.MoveObject(puckCollision);
@@ -330,7 +330,7 @@ namespace pongpong
             GetWinner(puckCollision);
         }
 
-        public void MakeGraphic()
+        private void MakeGraphic()
         {
             
             foreach (BaseObject figure in BaseObjects)
