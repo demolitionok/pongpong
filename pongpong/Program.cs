@@ -248,7 +248,18 @@ namespace pongpong
             BaseObjects.Add(ScoreArea1);
             BaseObjects.Add(ScoreArea2);
             BaseObjects.Add(new Obstacle(new Vector2f(0f, 0f), new Vector2f(50f, 600f)));
+            BaseObjects.Add(new Obstacle(new Vector2f(200f, 275f), new Vector2f(100f, 50f)));
+            BaseObjects.Add(new Obstacle(new Vector2f(500f, 275f), new Vector2f(100f, 50f)));
             BaseObjects.Add(new Obstacle(new Vector2f(750f, 0f), new Vector2f(50f, 600f)));
+        }
+
+        public void InitEvents()
+        {
+            window.KeyPressed += Window_KeyPressed;
+            window.KeyPressed += Player1.Player_KeyPressed;
+            window.KeyReleased += Player1.Player_KeyReleased;
+            window.KeyPressed += Player2.Player_KeyPressed;
+            window.KeyReleased += Player2.Player_KeyReleased;
         }
 
         public void InitKeys()
@@ -260,6 +271,15 @@ namespace pongpong
             Player1_Keys.Add(Keyboard.Key.D);
             Player2_Keys.Add(Keyboard.Key.Right);
             Player2_Keys.Add(Keyboard.Key.Left);
+        }
+
+        public void Initialization()
+        {
+            InitKeys();
+            InitVariables();
+            InitText();
+            InitObstacles();
+            InitEvents();
         }
         public Collision DetectCollision(BaseObject baseObject, List<BaseObject> figures)
         {
@@ -289,14 +309,6 @@ namespace pongpong
                 }   
             }
             return new Collision(new Vector2f(0,0), null);
-        }
-
-        public void Initialization()
-        {
-            InitKeys();
-            InitVariables();
-            InitText();
-            InitObstacles();
         }
 
         public void GetWinner(Collision coll)
@@ -332,11 +344,6 @@ namespace pongpong
         {
             window = new RenderWindow(new VideoMode(800, 600), "dingdong");
             Initialization();
-            window.KeyPressed += Window_KeyPressed;
-            window.KeyPressed += Player1.Player_KeyPressed;
-            window.KeyReleased += Player1.Player_KeyReleased;
-            window.KeyPressed += Player2.Player_KeyPressed;
-            window.KeyReleased += Player2.Player_KeyReleased;
             
             while (window.IsOpen)
             {
