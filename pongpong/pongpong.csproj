@@ -55,8 +55,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseObject.cs" />
+    <Compile Include="Collision.cs" />
+    <Compile Include="Game.cs" />
+    <Compile Include="IVertexContaining.cs" />
+    <Compile Include="Obstacle.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Puck.cs" />
+    <Compile Include="ScoreArea.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
