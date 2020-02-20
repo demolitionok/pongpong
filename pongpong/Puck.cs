@@ -13,7 +13,6 @@ namespace pongpong
     {
         public new void InitVertexes()
         {
-            Vector2f center = new Vector2f(shapeSize.X + shape.Position.X, shapeSize.Y + shape.Position.Y);
             vertexes[0] = new Vector2f(shapeSize.X + shape.Position.X, shape.Position.Y);
             vertexes[1] = new Vector2f(2*shapeSize.X + shape.Position.X, shapeSize.Y + shape.Position.Y);
             vertexes[2] = new Vector2f(shapeSize.X + shape.Position.X, 2*shapeSize.Y + shape.Position.Y);
@@ -32,22 +31,21 @@ namespace pongpong
         public new void MoveObject(Collision coll)
         {
             velocity = dirVector * speed;
-            if (coll.collVector == new Vector2f(0,0))
+            if (coll.collObject == null)
             {
-                
                 shape.Position += velocity;
             }
             else
             {
-                if (coll.collVector == vertexes[0] || coll.collVector == vertexes[2])
+                if (coll.collVertex2 == vertexes[0] || coll.collVertex2 == vertexes[2])
                 {
                     dirVector = new Vector2f(dirVector.X, -dirVector.Y);
                 }
-                else if (coll.collVector == vertexes[1] || coll.collVector == vertexes[3])
+                else if (coll.collVertex2 == vertexes[1] || coll.collVertex2 == vertexes[3])
                 {
                     dirVector = new Vector2f(-dirVector.X, dirVector.Y);
                 }
-
+                shape.Position -= 10*velocity;
                 shape.Position -= 3*velocity;
             }
             InitVertexes();

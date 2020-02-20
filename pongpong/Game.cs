@@ -31,10 +31,6 @@ namespace pongpong
         private List<IVertexContaining> VertexContainings;
         private List<BaseObject> BaseObjects;
 
-        public void FartherstVertex()
-        {
-        }
-
         private void Window_KeyPressed(object sender, KeyEventArgs e)
         {
             var window = (Window) sender;
@@ -55,7 +51,7 @@ namespace pongpong
             ScoreArea1 = new ScoreArea(new Vector2f(50f, 0f), new Vector2f(700f, 25f), Player1);
             ScoreArea2 = new ScoreArea(new Vector2f(50f, 575f), new Vector2f(700f, 25f), Player2);
         
-            puck = new Puck(new Vector2f(10f,10f), 0.1f,new Vector2f(-1f,0.5f), new Vector2f(400,300), Color.Red);
+            puck = new Puck(new Vector2f(10f,10f), 0.1f,new Vector2f(-1f,-0.5f), new Vector2f(400,400), Color.Red);
         
             VertexContainings = new List<IVertexContaining>();
             BaseObjects = new List<BaseObject>();
@@ -109,35 +105,6 @@ namespace pongpong
             InitObstacles();
             InitEvents();
         }
-        private Collision DetectCollision(BaseObject baseObject, List<BaseObject> figures)
-        {
-            /*Puck tempBaseObject = baseObject;
-            tempBaseObject.shape.Position += tempBaseObject.velocity;
-            tempBaseObject.InitVertexes();*/
-            foreach (var figure in figures)
-            {
-                for(int i = 0; i < baseObject.vertexes.Length; i++)
-                {
-                    if(
-                        (
-                        (baseObject.vertexes[i].X >= figure.vertexes[0].X || baseObject.vertexes[i].X >= figure.vertexes[3].X)
-                        &&
-                        (baseObject.vertexes[i].X <= figure.vertexes[1].X || baseObject.vertexes[i].X <= figure.vertexes[2].X)
-                        )
-                        &&
-                        (
-                        (baseObject.vertexes[i].Y >= figure.vertexes[0].Y || baseObject.vertexes[i].Y >= figure.vertexes[3].Y)
-                         &&
-                        (baseObject.vertexes[i].Y <= figure.vertexes[1].Y || baseObject.vertexes[i].Y <= figure.vertexes[2].Y)
-                        )
-                        )
-                    {
-                        return new Collision(baseObject.vertexes[i], figure);
-                    }
-                }   
-            }
-            return new Collision(new Vector2f(0,0), null);
-        }
 
         private void GetWinner(Collision coll)
         {
@@ -151,7 +118,7 @@ namespace pongpong
 
         private void Logic()
         {
-            Collision puckCollision = DetectCollision(puck, BaseObjects);
+            Collision puckCollision = puck.DetectCollision(BaseObjects);
             puck.MoveObject(puckCollision);
             Player1.MoveObject();
             Player2.MoveObject();
