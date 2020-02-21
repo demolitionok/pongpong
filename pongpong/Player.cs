@@ -13,7 +13,32 @@ namespace pongpong
     public class Player : BaseObject
     {
         private List<Keyboard.Key> playerKeys;
+        public float money = 0;
         public string name;
+        public Text Name = new Text();
+
+        public void UpgradeSelf()
+        {
+            shapeSize += new Vector2f(2f, 0f);
+            shape = new RectangleShape(shapeSize);
+        }
+
+        public void DegradeFoe(Player foe)//downgrade
+        {
+            foe.shapeSize -= new Vector2f(2f, 0f);
+            foe.shape = new RectangleShape(shapeSize);
+        }
+
+        public void InitName()
+        {
+            if (name != null)
+            {
+                Name.DisplayedString = name;
+                Name.Font = new Font("BiolinumV1.ttf");
+                Name.CharacterSize = 22;
+                Name.FillColor = Color.Red;
+            }
+        }
 
         public void Player_KeyPressed(object sender, KeyEventArgs e)
         {
@@ -44,6 +69,7 @@ namespace pongpong
             this.playerKeys = playerKeys;
             this.shapeSize = shapeSize;
             InitVertexes();
+            InitName();
         }
     }
 }

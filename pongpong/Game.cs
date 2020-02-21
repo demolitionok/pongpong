@@ -15,11 +15,11 @@ namespace pongpong
         private Clock clock;
         private bool gameStopped;
         
-        private RenderWindow window;
+        private RenderWindow gameWindow;
         private List<Keyboard.Key> Player1_Keys;
         private List<Keyboard.Key> Player2_Keys;
 
-        Text winnerName;
+        public Player Winner;
         private Player Player1;
         private Player Player2;
         
@@ -30,12 +30,13 @@ namespace pongpong
         
         private List<IVertexContaining> VertexContainings;
         private List<BaseObject> BaseObjects;
+        private List<Text> Texts;
 
         public void FartherstVertex()
         {
         }
 
-        private void Window_KeyPressed(object sender, KeyEventArgs e)
+        private void GameWindowKeyPressed(object sender, KeyEventArgs e)
         {
             var window = (Window) sender;
             if (e.Code == Keyboard.Key.Escape)
@@ -48,7 +49,7 @@ namespace pongpong
         {
             clock = new Clock();
             gameStopped = false;
-            winnerName = new Text() {FillColor = Color.White};
+            Winner = null;
             Player1 = new Player(new Vector2f(50f, 20f), 0.2f, new Vector2f(400, 550), Player1_Keys, "Player1"); 
             Player2 = new Player(new Vector2f(50f, 20f), 0.2f, new Vector2f(400, 50), Player2_Keys, "Player2");
         
@@ -58,15 +59,19 @@ namespace pongpong
             puck = new Puck(new Vector2f(10f,10f), 0.1f,new Vector2f(-1f,0.5f), new Vector2f(400,300), Color.Red);
         
             VertexContainings = new List<IVertexContaining>();
+            Texts = new List<Text>();
             BaseObjects = new List<BaseObject>();
         }
 
-        private void InitText()
+        public void InitPlayerName(Player player,Vector2f pos)
         {
-            winnerName.Font = new Font("BiolinumV1.ttf");
-            winnerName.CharacterSize = 22;
-            winnerName.FillColor = Color.White;    
-            winnerName.Position = new Vector2f(400,300);          
+            player.Name.Position = pos;
+        }
+
+        private void EndGameText()
+        {
+            InitPlayerName(Winner, new Vector2f(400, 300));
+            gameWindow.Draw(Winner.Name);
         }
 
         private void InitObstacles()
@@ -83,11 +88,11 @@ namespace pongpong
 
         private void InitEvents()
         {
-            window.KeyPressed += Window_KeyPressed;
-            window.KeyPressed += Player1.Player_KeyPressed;
-            window.KeyReleased += Player1.Player_KeyReleased;
-            window.KeyPressed += Player2.Player_KeyPressed;
-            window.KeyReleased += Player2.Player_KeyReleased;
+            gameWindow.KeyPressed += GameWindowKeyPressed;
+            gameWindow.KeyPressed += Player1.Player_KeyPressed;
+            gameWindow.KeyReleased += Player1.Player_KeyReleased;
+            gameWindow.KeyPressed += Player2.Player_KeyPressed;
+            gameWindow.KeyReleased += Player2.Player_KeyReleased;
         }
 
         private void InitKeys()
@@ -105,7 +110,6 @@ namespace pongpong
         {
             InitKeys();
             InitVariables();
-            InitText();
             InitObstacles();
             InitEvents();
         }
@@ -139,12 +143,18 @@ namespace pongpong
             return new Collision(new Vector2f(0,0), null);
         }
 
-        private void GetWinner(Collision coll)
+        private void OnWin()
         {
-            if (coll.collObject?.GetType() == typeof(ScoreArea))
+            Winner.money += 200;
+        }
+
+        private void GetWinner(Collision puckCollision)
+        {
+            if (puckCollision.collObject?.GetType() == typeof(ScoreArea))
             {
-                ScoreArea temp = (ScoreArea)coll.collObject;
-                winnerName.DisplayedString = temp.owner.name;
+                ScoreArea temp = (ScoreArea)puckCollision.collObject;
+                Winner = temp.owner;
+                OnWin();
                 gameStopped = true;
             }
         }
@@ -160,36 +170,39 @@ namespace pongpong
 
         private void MakeGraphic()
         {
-            
+            foreach (var text in Texts)
+            {
+                gameWindow.Draw(text);
+            }
             foreach (BaseObject figure in BaseObjects)
             {
-                window.Draw(figure.shape);
+                gameWindow.Draw(figure.shape);
             }
-            window.Draw(puck.shape);
+            gameWindow.Draw(puck.shape);
         }
 
         public void Run()
         {
-            window = new RenderWindow(new VideoMode(800, 600), "dingdong");
+            gameWindow = new RenderWindow(new VideoMode(800, 600), "dingdong");
             Initialization();
             
-            while (window.IsOpen)
+            while (gameWindow.IsOpen)
             {
                 if (gameStopped  == false)
                 {
                     Logic();
                     MakeGraphic();
-                    window.DispatchEvents();
-                    window.Display();
-                    window.Clear();
+                    gameWindow.DispatchEvents();
+                    gameWindow.Display();
+                    gameWindow.Clear();
                     
                 }
                 else
                 {
-                    window.Draw(winnerName);
-                    window.DispatchEvents();
-                    window.Display();
-                    window.Clear();
+                    EndGameText();
+                    gameWindow.DispatchEvents();
+                    gameWindow.Display();
+                    gameWindow.Clear();
                     Time elapsed = clock.ElapsedTime;
                     if(elapsed >= Time.FromSeconds(10))
                     {

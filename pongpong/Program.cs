@@ -14,7 +14,8 @@ namespace pongpong
         public static void Main(string[] args)
         {
             var game = new Game();
-            game.Run();
+            var lobby = new Lobby(game);
+            lobby.InitLobby();
         }
     }
 }
