@@ -13,6 +13,7 @@ namespace pongpong
     {
         public RenderWindow lobbyWindow = new RenderWindow(new VideoMode(800, 600), "Lobby");
         public Game game;
+        public bool initOnce = true;
         List<GameButton> GameButt;
         public Lobby(Game game)
         {   
@@ -36,6 +37,12 @@ namespace pongpong
             
             //GameButt.Add(new GameButton("butt)", new Vector2f(100f,100f), new Vector2f(300f, 200f), game.Winner.UpgradeSelf));
             GameButt.Add(new GameButton("PlayGame", new Vector2f(100f,100f), new Vector2f(300f, 200f), InitGame));
+            
+            if(game.Winner != null)
+            {
+                GameButt.Add(new GameButton("Upgrade self", 200, game.Winner, new Vector2f(100f,100f), new Vector2f(100f, 450f), game.Winner.UpgradeSelf));
+                GameButt.Add(new GameButton("Degrade opponent", 200, game.Winner, new Vector2f(100f,100f), new Vector2f(300f, 450f), game.Winner.DegradeFoe));
+            }
             
         }
         private void GameWindowKeyPressed(object sender, KeyEventArgs e)
@@ -77,11 +84,25 @@ namespace pongpong
             Initialization();
             while (lobbyWindow.IsOpen)
             {
-                Logic();
-                MakeGraphic();
-                lobbyWindow.DispatchEvents();
-                lobbyWindow.Display();
-                lobbyWindow.Clear();
+                if (game.gameWindow == null || game.gameWindow.IsOpen == false)
+                {
+                    if (game.Winner != null && initOnce == true)
+                    {
+                        InitUI();
+                        initOnce = false;
+                    }
+
+                    Logic();
+                    MakeGraphic();
+                    lobbyWindow.DispatchEvents();
+                    lobbyWindow.Display();
+                    lobbyWindow.Clear();
+                }
+
+                else if (game.gameWindow.IsOpen)
+                {
+                    initOnce = true;
+                }
             }
         }
     }

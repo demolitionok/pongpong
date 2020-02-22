@@ -14,18 +14,19 @@ namespace pongpong
     {
         private List<Keyboard.Key> playerKeys;
         public float money = 0;
+        public Player foe;
         public string name;
         public Text Name = new Text();
 
         public void UpgradeSelf()
         {
-            shapeSize += new Vector2f(2f, 0f);
+            shapeSize += new Vector2f(10f, 0f);
             shape = new RectangleShape(shapeSize);
         }
 
-        public void DegradeFoe(Player foe)//downgrade
+        public void DegradeFoe()//downgrade
         {
-            foe.shapeSize -= new Vector2f(2f, 0f);
+            foe.shapeSize -= new Vector2f(10f, 0f);
             foe.shape = new RectangleShape(shapeSize);
         }
 
@@ -58,16 +59,17 @@ namespace pongpong
             dirVector = new Vector2f(0, 0);
         }
 
-        public Player(Vector2f shapeSize, float speed, Vector2f startPos, List<Keyboard.Key> playerKeys, string name)
+        public Player(string name, float speed, Vector2f shapeSize, Vector2f startPos, List<Keyboard.Key> playerKeys, Player foe)
         {
             this.name = name;
+            this.foe = foe;
+            this.shapeSize = shapeSize;
             shape = new RectangleShape(shapeSize);
             this.startPos = startPos;
             shape.Position = startPos;
 
             this.speed = speed;
             this.playerKeys = playerKeys;
-            this.shapeSize = shapeSize;
             InitVertexes();
             InitName();
         }

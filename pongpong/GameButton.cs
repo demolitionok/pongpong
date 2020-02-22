@@ -13,7 +13,9 @@ namespace pongpong
     public delegate void OnClick();
     public class GameButton
     {
-        public OnClick onClick; 
+        public OnClick onClick;
+        public Player owner;
+        public int cost;
         public string text = "button";
         public Text Name = new Text();
         protected Vector2f startPos;
@@ -65,7 +67,13 @@ namespace pongpong
                 )
                 {
                     Console.WriteLine("Clicked");
-                    onClick();
+                    if(owner == null)
+                        onClick();
+                    else if (owner.money >= cost)
+                    {
+                        onClick();
+                        owner.money -= cost;
+                    }
                 }
             }
             Console.WriteLine("Not Clicked");
@@ -74,6 +82,19 @@ namespace pongpong
         public GameButton(string text, Vector2f shapeSize, Vector2f startPos, Action action)
         {
             onClick = new OnClick(action);
+            this.text = text;
+            this.shapeSize = shapeSize;
+            shape = new RectangleShape(shapeSize);
+            shape.Position = startPos;
+            
+            InitVertexes();
+            InitName();
+        }
+        public GameButton(string text, int cost, Player owner, Vector2f shapeSize, Vector2f startPos, Action action)
+        {
+            onClick = new OnClick(action);
+            this.cost = cost;
+            this.owner = owner;
             this.text = text;
             this.shapeSize = shapeSize;
             shape = new RectangleShape(shapeSize);

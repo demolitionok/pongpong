@@ -15,13 +15,15 @@ namespace pongpong
         private Clock clock;
         private bool gameStopped;
         
-        private RenderWindow gameWindow;
+        public RenderWindow gameWindow;
         private List<Keyboard.Key> Player1_Keys;
         private List<Keyboard.Key> Player2_Keys;
 
         public Player Winner;
         private Player Player1;
+        public Vector2f shapeSize1 = new Vector2f(50f, 20f);
         private Player Player2;
+        public Vector2f shapeSize2 = new Vector2f(50f, 20f);
         
         private ScoreArea ScoreArea1;
         private ScoreArea ScoreArea2;
@@ -45,13 +47,13 @@ namespace pongpong
             }
         }
 
-        private void InitVariables()
+        public void InitVariables()
         {
             clock = new Clock();
             gameStopped = false;
             Winner = null;
-            Player1 = new Player(new Vector2f(50f, 20f), 0.2f, new Vector2f(400, 550), Player1_Keys, "Player1"); 
-            Player2 = new Player(new Vector2f(50f, 20f), 0.2f, new Vector2f(400, 50), Player2_Keys, "Player2");
+            Player1 = new Player("Player1", 0.2f, shapeSize1, new Vector2f(400, 550), Player1_Keys, Player2); 
+            Player2 = new Player("Player2", 0.2f,  shapeSize2,new Vector2f(400, 50), Player2_Keys, Player1);
         
             ScoreArea1 = new ScoreArea(new Vector2f(50f, 0f), new Vector2f(700f, 25f), Player1);
             ScoreArea2 = new ScoreArea(new Vector2f(50f, 575f), new Vector2f(700f, 25f), Player2);
@@ -208,6 +210,7 @@ namespace pongpong
                     {
                         Initialization();
                     }
+                    gameWindow.Close();
                 }
             }
         }
