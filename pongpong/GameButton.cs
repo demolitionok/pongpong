@@ -69,10 +69,10 @@ namespace pongpong
                     Console.WriteLine("Clicked");
                     if(owner == null)
                         onClick();
-                    else if (owner.money >= cost)
+                    else if (owner.playerData.money >= cost)
                     {
                         onClick();
-                        owner.money -= cost;
+                        owner.playerData.money -= cost;
                     }
                 }
             }

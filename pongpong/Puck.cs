@@ -53,9 +53,10 @@ namespace pongpong
             InitVertexes();
         }
 
-        public Puck(Vector2f shapeSize, float speed, Vector2f dirVector, Vector2f startPos, Color color)
+        public Puck(Vector2f shapeSize, float speed, Vector2f startDirVector, Vector2f startPos, Color color)
         {
-            this.dirVector = dirVector;
+            this.startDirVector = startDirVector;
+            dirVector = startDirVector;
             this.startPos = startPos;
             this.speed = speed;
             this.shapeSize = shapeSize;

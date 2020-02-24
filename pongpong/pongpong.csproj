@@ -60,6 +60,8 @@
     <Compile Include="Collision.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameButton.cs" />
+    <Compile Include="GameData.cs" />
+    <Compile Include="PlayerData.cs" />
     <Compile Include="IVertexContaining.cs" />
     <Compile Include="Lobby.cs" />
     <Compile Include="Obstacle.cs" />

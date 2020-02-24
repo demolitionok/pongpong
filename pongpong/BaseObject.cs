@@ -12,8 +12,9 @@ namespace pongpong
     public class BaseObject : IVertexContaining
     {
         protected float speed = 0;
-        protected Vector2f startPos;
-        protected Vector2f dirVector = new Vector2f(0f, 0f);
+        public Vector2f startPos;
+        public Vector2f startDirVector = new Vector2f(0f, 0f);
+        public Vector2f dirVector = new Vector2f(0f, 0f);
         protected Vector2f velocity;
         public Vector2f[] vertexes = new Vector2f[4];
         protected Vector2f shapeSize;

@@ -12,58 +12,17 @@ namespace pongpong
 
     public class Game
     {
-        private Clock clock;
-        private bool gameStopped;
-        
-        public RenderWindow gameWindow;
-        private List<Keyboard.Key> Player1_Keys;
-        private List<Keyboard.Key> Player2_Keys;
+        public GameData gameData;
 
-        public Player Winner;
-        private Player Player1;
-        public Vector2f shapeSize1 = new Vector2f(50f, 20f);
-        private Player Player2;
-        public Vector2f shapeSize2 = new Vector2f(50f, 20f);
-        
-        private ScoreArea ScoreArea1;
-        private ScoreArea ScoreArea2;
-        
-        private Puck puck;
-        
-        private List<IVertexContaining> VertexContainings;
-        private List<BaseObject> BaseObjects;
-        private List<Text> Texts;
+        public Game(GameData gameData)
+        {
+            this.gameData = gameData;
+        }
 
         public void FartherstVertex()
         {
         }
 
-        private void GameWindowKeyPressed(object sender, KeyEventArgs e)
-        {
-            var window = (Window) sender;
-            if (e.Code == Keyboard.Key.Escape)
-            {
-                window.Close();
-            }
-        }
-
-        public void InitVariables()
-        {
-            clock = new Clock();
-            gameStopped = false;
-            Winner = null;
-            Player1 = new Player("Player1", 0.2f, shapeSize1, new Vector2f(400, 550), Player1_Keys, Player2); 
-            Player2 = new Player("Player2", 0.2f,  shapeSize2,new Vector2f(400, 50), Player2_Keys, Player1);
-        
-            ScoreArea1 = new ScoreArea(new Vector2f(50f, 0f), new Vector2f(700f, 25f), Player1);
-            ScoreArea2 = new ScoreArea(new Vector2f(50f, 575f), new Vector2f(700f, 25f), Player2);
-        
-            puck = new Puck(new Vector2f(10f,10f), 0.1f,new Vector2f(-1f,0.5f), new Vector2f(400,300), Color.Red);
-        
-            VertexContainings = new List<IVertexContaining>();
-            Texts = new List<Text>();
-            BaseObjects = new List<BaseObject>();
-        }
 
         public void InitPlayerName(Player player,Vector2f pos)
         {
@@ -72,49 +31,12 @@ namespace pongpong
 
         private void EndGameText()
         {
-            InitPlayerName(Winner, new Vector2f(400, 300));
-            gameWindow.Draw(Winner.Name);
+            InitPlayerName(gameData.Winner, new Vector2f(400, 300));
+            gameData.gameWindow.Draw(gameData.Winner.Name);
         }
 
-        private void InitObstacles()
-        {
-            BaseObjects.Add(Player1);
-            BaseObjects.Add(Player2);
-            BaseObjects.Add(ScoreArea1);
-            BaseObjects.Add(ScoreArea2);
-            BaseObjects.Add(new Obstacle(new Vector2f(0f, 0f), new Vector2f(50f, 600f)));
-            BaseObjects.Add(new Obstacle(new Vector2f(200f, 275f), new Vector2f(100f, 50f)));
-            BaseObjects.Add(new Obstacle(new Vector2f(500f, 275f), new Vector2f(100f, 50f)));
-            BaseObjects.Add(new Obstacle(new Vector2f(750f, 0f), new Vector2f(50f, 600f)));
-        }
 
-        private void InitEvents()
-        {
-            gameWindow.KeyPressed += GameWindowKeyPressed;
-            gameWindow.KeyPressed += Player1.Player_KeyPressed;
-            gameWindow.KeyReleased += Player1.Player_KeyReleased;
-            gameWindow.KeyPressed += Player2.Player_KeyPressed;
-            gameWindow.KeyReleased += Player2.Player_KeyReleased;
-        }
 
-        private void InitKeys()
-        {
-            Player1_Keys = new List<Keyboard.Key>();
-            Player2_Keys = new List<Keyboard.Key>();
-            
-            Player1_Keys.Add(Keyboard.Key.F);
-            Player1_Keys.Add(Keyboard.Key.D);
-            Player2_Keys.Add(Keyboard.Key.Right);
-            Player2_Keys.Add(Keyboard.Key.Left);
-        }
-
-        private void Initialization()
-        {
-            InitKeys();
-            InitVariables();
-            InitObstacles();
-            InitEvents();
-        }
         private Collision DetectCollision(BaseObject baseObject, List<BaseObject> figures)
         {
             /*Puck tempBaseObject = baseObject;
@@ -147,70 +69,67 @@ namespace pongpong
 
         private void OnWin()
         {
-            Winner.money += 200;
+            gameData.Winner.playerData.money += 200;
         }
 
         private void GetWinner(Collision puckCollision)
         {
             if (puckCollision.collObject?.GetType() == typeof(ScoreArea))
             {
-                ScoreArea temp = (ScoreArea)puckCollision.collObject;
-                Winner = temp.owner;
+                ScoreArea temp = (ScoreArea) puckCollision.collObject;
+                gameData.Winner = temp.owner;
                 OnWin();
-                gameStopped = true;
+                
+                gameData.gameStopped = true;
             }
         }
 
         private void Logic()
         {
-            Collision puckCollision = DetectCollision(puck, BaseObjects);
-            puck.MoveObject(puckCollision);
-            Player1.MoveObject();
-            Player2.MoveObject();
+            Collision puckCollision = DetectCollision(gameData.puck, gameData.BaseObjects);
+            gameData.puck.MoveObject(puckCollision);
+            gameData.Player1.MoveObject();
+            gameData.Player2.MoveObject();
             GetWinner(puckCollision);
         }
 
         private void MakeGraphic()
         {
-            foreach (var text in Texts)
+            foreach (var text in gameData.Texts)
             {
-                gameWindow.Draw(text);
+                gameData.gameWindow.Draw(text);
             }
-            foreach (BaseObject figure in BaseObjects)
+            foreach (BaseObject figure in gameData.BaseObjects)
             {
-                gameWindow.Draw(figure.shape);
+                gameData.gameWindow.Draw(figure.shape);
             }
-            gameWindow.Draw(puck.shape);
+            gameData.gameWindow.Draw(gameData.puck.shape);
         }
 
         public void Run()
         {
-            gameWindow = new RenderWindow(new VideoMode(800, 600), "dingdong");
-            Initialization();
-            
-            while (gameWindow.IsOpen)
+            while (gameData.gameWindow.IsOpen)
             {
-                if (gameStopped  == false)
+                if (gameData.gameStopped  == false)
                 {
                     Logic();
                     MakeGraphic();
-                    gameWindow.DispatchEvents();
-                    gameWindow.Display();
-                    gameWindow.Clear();
+                    gameData.gameWindow.DispatchEvents();
+                    gameData.gameWindow.Display();
+                    gameData.gameWindow.Clear();
                     
                 }
                 else
                 {
                     EndGameText();
-                    gameWindow.DispatchEvents();
-                    gameWindow.Display();
-                    gameWindow.Clear();
-                    Time elapsed = clock.ElapsedTime;
+                    gameData.gameWindow.DispatchEvents();
+                    gameData.gameWindow.Display();
+                    gameData.gameWindow.Clear();
+                    Time elapsed = gameData.clock.ElapsedTime;
                     if(elapsed >= Time.FromSeconds(10))
                     {
-                        Initialization();
+                        gameData.gameWindow.Close();
                     }
-                    gameWindow.Close();
                 }
             }
         }
