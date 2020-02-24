@@ -19,11 +19,15 @@ namespace pongpong
         public void Upgrade()
         {
             gameData.Winner.playerData.shapeSize += new Vector2f(10f, 0f);
+            gameData.Winner.shape = new RectangleShape(gameData.Winner.playerData.shapeSize + gameData.Winner.shapeSize);
+            gameData.Winner.InitVertexes();
         }
 
         public void Degrade()//downgrade
         {
             gameData.Winner.foe.playerData.shapeSize -= new Vector2f(10f, 0f);
+            gameData.Winner.foe.shape = new RectangleShape(gameData.Winner.foe.playerData.shapeSize + gameData.Winner.foe.shapeSize);
+            gameData.Winner.foe.InitVertexes();
             
         }
         public Lobby()
@@ -57,6 +61,7 @@ namespace pongpong
             }
             gameData.puck.shape.Position = gameData.puck.startPos;
             gameData.puck.dirVector = gameData.puck.startDirVector;
+
         }
 
         private void InitGameEvents()

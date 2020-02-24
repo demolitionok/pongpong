@@ -17,10 +17,10 @@ namespace pongpong
         public Vector2f dirVector = new Vector2f(0f, 0f);
         protected Vector2f velocity;
         public Vector2f[] vertexes = new Vector2f[4];
-        protected Vector2f shapeSize;
+        public Vector2f shapeSize;
         public Shape shape;
 
-        
+
         public virtual void InitVertexes()
         {
             vertexes[0] = shape.Position;
